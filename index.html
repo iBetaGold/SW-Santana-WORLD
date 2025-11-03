@@ -1,179 +1,180 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHAOS $YMPHONY - Servidor Discord</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>SW - Santana World | Comunidade Discord</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #2f3136 0%, #202225 100%);
-            font-family: 'Poppins', sans-serif;
-            color: #ffffff;
-            overflow-x: hidden;
             margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-image: url('https://www.creativefabrica.com/wp-content/uploads/2019/03/Monogram-SW-Logo-Design-by-Greenlines-Studios.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
         }
-        .hero {
-            background: url('https://source.unsplash.com/random/1920x1080/?cyberpunk,gaming') no-repeat center center/cover;
-            position: relative;
-            isolation: isolate;
-            padding: 80px 0;
+        .overlay {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(20, 20, 40, 0.8));
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 900px;
+            margin: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 1s ease-out;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(47, 49, 54, 0.8);
-            z-index: 1;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .hero-content {
-            position: relative;
-            z-index: 2;
+        h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            text-shadow: none;
+            margin-bottom: 10px;
+            color: #fff;
+            animation: none;
         }
-        .title {
-            font-size: 4rem;
-            font-weight: 800;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            background: linear-gradient(90deg, #5865F2, #8EA1E1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .feature-card {
-            background: #36393f;
-            border-radius: 12px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid #5865F2;
-        }
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 8px 24px rgba(88, 101, 242, 0.3);
-        }
-        .invite-button {
-            background: linear-gradient(90deg, #5865F2, #7289DA);
-            font-weight: 600;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .invite-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 16px rgba(88, 101, 242, 0.5);
+        p {
+            font-size: 1.3em;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            font-weight: 300;
+            animation: fadeIn 1.5s ease-out 0.5s both;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        .animate-fadeIn {
-            animation: fadeIn 1s ease-out forwards;
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideIn 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        .feature:nth-child(1) { animation-delay: 0.2s; }
+        .feature:nth-child(2) { animation-delay: 0.4s; }
+        .feature:nth-child(3) { animation-delay: 0.6s; }
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .feature h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .feature p {
+            font-size: 1em;
+            margin: 0;
+        }
+        .join-btn {
+            background: linear-gradient(45deg, #000, #333);
+            color: #fff;
+            padding: 18px 40px;
+            font-size: 1.6em;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #fff;
+        }
+        .join-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        .join-btn:hover::before {
+            left: 100%;
+        }
+        .join-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
+        }
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            width: 100%;
+            font-size: 0.9em;
+            animation: fadeIn 2s ease-out 1s both;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            p { font-size: 1.1em; }
+            .overlay { padding: 20px; }
+            .features { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <header class="hero">
-        <div class="hero-content container mx-auto px-4 text-center">
-            <h1 class="title mb-4 animate-fadeIn">CHAOS $YMPHONY</h1>
-            <p class="text-xl md:text-2xl mb-8 animate-fadeIn" style="animation-delay: 0.2s;">
-                Mergulhe no caos harmonioso! Um servidor Discord para jogos no Roblox, conversas épicas e troca de ideias.
-            </p>
-            <a href="https://discord.gg/duYhGUfdbn" class="invite-button inline-block text-lg text-white py-4 px-10 rounded-lg shadow-lg animate-fadeIn" style="animation-delay: 0.4s;">
-                Entrar no Servidor
-            </a>
-        </div>
-    </header>
-
-    <section id="about" class="py-20 container mx-auto px-4">
-        <h2 class="text-3xl md:text-4xl font-bold text-center mb-10 animate-fadeIn">Sobre o CHAOS $YMPHONY</h2>
-        <p class="text-lg md:text-xl text-center max-w-3xl mx-auto animate-fadeIn" style="animation-delay: 0.2s;">
-            No CHAOS $YMPHONY, a diversão nunca para! Somos uma comunidade vibrante onde você pode jogar Roblox, compartilhar memes, debater ideias e participar de eventos únicos. Entre no ritmo e faça parte do caos!
-        </p>
-    </section>
-
-    <section id="features" class="py-20 bg-gray-800/30">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 animate-fadeIn">O que oferecemos?</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="feature-card p-8 animate-fadeIn" style="animation-delay: 0.2s;">
-                    <h3 class="text-2xl font-semibold mb-4">Conversas Vibrantes</h3>
-                    <p>Canais para todos os gostos: de papos casuais a discussões nerds e memes épicos.</p>
-                </div>
-                <div class="feature-card p-8 animate-fadeIn" style="animation-delay: 0.4s;">
-                    <h3 class="text-2xl font-semibold mb-4">Roblox Mania</h3>
-                    <p>Jogue com a galera, organize partidas e mostre suas habilidades no Roblox.</p>
-                </div>
-                <div class="feature-card p-8 animate-fadeIn" style="animation-delay: 0.6s;">
-                    <h3 class="text-2xl font-semibold mb-4">Ideias em Ação</h3>
-                    <p>Espaço para criar, colaborar e transformar suas ideias em algo incrível.</p>
-                </div>
+    <div class="overlay">
+        <h1>SW - Santana World</h1>
+        <p>Bem-vindo à nossa comunidade no Discord! Aqui é o lugar perfeito para se divertir com amigos, bater papo e participar de sorteios incríveis de Robux. Junte-se a nós e faça parte de uma galera animada pronta para jogar!</p>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🎉 Sorteios de Robux</h3>
+                <p>Participe de giveaways exclusivos e ganhe Robux grátis para turbinar seus jogos!</p>
+            </div>
+            <div class="feature">
+                <h3>💬 Conversa Animada</h3>
+                <p>Canais dedicados para bate-papo, memes e discussões sobre tudo que você ama.</p>
+            </div>
+            <div class="feature">
+                <h3>👥 Amigos para Jogar</h3>
+                <p>Encontre parceiros para squads em Roblox e outros games. Ninguém joga sozinho aqui!</p>
             </div>
         </div>
-    </section>
-
-    <section id="community" class="py-20 container mx-auto px-4 text-center">
-        <h2 class="text-3xl md:text-4xl font-bold mb-10 animate-fadeIn">Junte-se à Comunidade</h2>
-        <p class="text-lg md:text-xl max-w-2xl mx-auto mb-8 animate-fadeIn" style="animation-delay: 0.2s;">
-            Somos uma comunidade apaixonada por jogos e criatividade. Venha fazer parte do CHAOS $YMPHONY e traga sua energia para nossa sinfonia!
-        </p>
-        <a href="https://discord.gg/duYhGUfdbn" class="invite-button inline-block text-lg text-white py-4 px-10 rounded-lg shadow-lg animate-fadeIn" style="animation-delay: 0.4s;">
-            Começar Agora
-        </a>
-    </section>
-
-    <footer class="py-10 bg-gray-900 text-center">
-        <p class="text-sm">&copy; 2025 CHAOS $YMPHONY. Todos os direitos reservados.</p>
+        
+        <a href="https://discord.gg/JfeTyUsZFG" class="join-btn" target="_blank">Entrar no Discord</a>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 SW - Santana World. Todos os direitos reservados. | Feito com ❤️ para a comunidade.</p>
     </footer>
-
-    <script>
-        // Scroll suave para links âncora
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        // Checa se JavaScript está habilitado
-        document.body.classList.add('js-enabled');
-        if (!document.body.classList.contains('js-enabled')) {
-            document.body.innerHTML = '<p class="text-center text-xl mt-10">Você precisa habilitar o JavaScript para visualizar este site.</p>';
-        }
-    </script>
+</body>
+</html>
